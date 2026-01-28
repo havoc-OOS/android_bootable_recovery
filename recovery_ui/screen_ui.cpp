@@ -504,7 +504,8 @@ int ScreenRecoveryUI::GetProgressBaseline() const {
 // Should only be called with updateMutex locked.
 void ScreenRecoveryUI::draw_background_locked() {
   pagesIdentical = false;
-  gr_color(0, 0, 0, 255);
+  // Modern dark background (Material Design dark theme)
+  gr_color(18, 18, 18, 255);
   gr_clear();
   if (current_icon_ != NONE) {
     if (max_stage != -1) {
@@ -549,7 +550,7 @@ void ScreenRecoveryUI::draw_foreground_locked() {
     int progress_y = GetProgressBaseline();
 
     // Erase behind the progress bar (in case this was a progress-only update)
-    gr_color(0, 0, 0, 255);
+    gr_color(18, 18, 18, 255);
     DrawFill(progress_x, progress_y, width, height);
 
     if (progressBarType == DETERMINATE) {
@@ -579,54 +580,66 @@ void ScreenRecoveryUI::draw_foreground_locked() {
   }
 }
 
-/* recovery dark:  #7C4DFF
-   recovery light: #F890FF
-   fastbootd dark: #E65100
-   fastboot light: #FDD835 */
+/* Material Design 3 Color Scheme
+   Recovery Theme (Modern Purple):
+   - Primary: #6200EE (Deep Purple)
+   - Secondary: #03DAC6 (Teal)
+   - Accent: #BB86FC (Light Purple)
+   - Background: #121212
+   - Surface: #1E1E1E
+   - Error: #CF6679
+
+   Fastbootd Theme (Modern Orange):
+   - Primary: #FF6D00 (Orange)
+   - Secondary: #FFD600 (Yellow)
+   - Accent: #FFAB40 (Light Orange)
+   - Background: #121212
+   - Surface: #1E1E1E
+   - Error: #CF6679 */
 void ScreenRecoveryUI::SetColor(UIElement e) const {
   switch (e) {
     case UIElement::BATTERY_LOW:
       if (fastbootd_logo_enabled_)
-        gr_color(0xfd, 0x35, 0x35, 255);
+        gr_color(0xcf, 0x66, 0x79, 255);  // Modern red for low battery
       else
-        gr_color(0xc7, 0x15, 0x85, 255);
+        gr_color(0xcf, 0x66, 0x79, 255);  // Modern red for low battery
       break;
     case UIElement::INFO:
       if (fastbootd_logo_enabled_)
-        gr_color(0xfd, 0xd8, 0x35, 255);
+        gr_color(0xff, 0xd6, 0x00, 255);  // Modern yellow for info
       else
-        gr_color(0xf8, 0x90, 0xff, 255);
+        gr_color(0xbb, 0x86, 0xfc, 255);  // Modern light purple for info
       break;
     case UIElement::HEADER:
       if (fastbootd_logo_enabled_)
-        gr_color(0xfd, 0xd8,0x35, 255);
+        gr_color(0xff, 0xd6, 0x00, 255);  // Modern yellow for header
       else
-        gr_color(0xf8, 0x90, 0xff, 255);
+        gr_color(0x03, 0xda, 0xc6, 255);  // Modern teal for header
       break;
     case UIElement::MENU:
-      gr_color(0xd8, 0xd8, 0xd8, 255);
+      gr_color(0xe0, 0xe0, 0xe0, 255);  // Lighter gray for better readability
       break;
     case UIElement::MENU_SEL_BG:
     case UIElement::SCROLLBAR:
       if (fastbootd_logo_enabled_)
-        gr_color(0xe6, 0x51, 0x00, 255);
+        gr_color(0xff, 0x6d, 0x00, 255);  // Modern orange for selection
       else
-        gr_color(0x7c, 0x4d, 0xff, 255);
+        gr_color(0x62, 0x00, 0xee, 255);  // Modern deep purple for selection
       break;
     case UIElement::MENU_SEL_BG_ACTIVE:
-      gr_color(0, 156, 100, 255);
+      gr_color(0x03, 0xda, 0xc6, 255);  // Teal for active selection
       break;
     case UIElement::MENU_SEL_FG:
       if (fastbootd_logo_enabled_)
-        gr_color(0, 0, 0, 255);
+        gr_color(0x12, 0x12, 0x12, 255);  // Dark text on orange background
       else
-        gr_color(0xd8, 0xd8, 0xd8, 255);
+        gr_color(0xff, 0xff, 0xff, 255);  // White text on purple background
       break;
     case UIElement::LOG:
-      gr_color(196, 196, 196, 255);
+      gr_color(0xb0, 0xb0, 0xb0, 255);  // Softer gray for logs
       break;
     case UIElement::TEXT_FILL:
-      gr_color(0, 0, 0, 160);
+      gr_color(30, 30, 30, 200);  // Darker semi-transparent background
       break;
     default:
       gr_color(255, 255, 255, 255);
@@ -650,7 +663,8 @@ void ScreenRecoveryUI::SelectAndShowBackgroundText(const std::vector<std::string
   }
 
   std::lock_guard<std::mutex> lg(updateMutex);
-  gr_color(0, 0, 0, 255);
+  // Modern dark background
+  gr_color(18, 18, 18, 255);
   gr_clear();
 
   int text_y = margin_height_;
@@ -730,6 +744,8 @@ void ScreenRecoveryUI::DrawSurface(const GRSurface* surface, int sx, int sy, int
 }
 
 int ScreenRecoveryUI::DrawHorizontalRule(int y) const {
+  // Modern subtle divider color
+  gr_color(60, 60, 60, 255);
   gr_fill(0, y + 4, ScreenWidth(), y + 6);
   return 8;
 }
@@ -824,7 +840,8 @@ void ScreenRecoveryUI::draw_screen_locked() {
     return;
   }
 
-  gr_color(0, 0, 0, 255);
+  // Modern dark background for text mode
+  gr_color(18, 18, 18, 255);
   gr_clear();
 
   draw_menu_and_text_buffer_locked(GetMenuHelpMessage());
@@ -902,31 +919,42 @@ void ScreenRecoveryUI::draw_battery_capacity_locked() {
     // Battery icon
     x = (ScreenWidth() - margin_width_ * 2 - kMenuIndent) - char_width_;
 
-    SetColor(UIElement::INFO);
+    // Battery outline color (modern gray)
+    gr_color(180, 180, 180, 255);
 
-    // Top
+    // Top (battery tip)
     icon_x = x + char_width_ / 3;
     icon_y = y;
     icon_w = char_width_ / 3;
     icon_h = char_height_ / 12;
     gr_fill(icon_x, icon_y, icon_x + icon_w, icon_y + icon_h);
 
-    // Main rect
+    // Main rect outline
     icon_x = x;
     icon_y = y + icon_h;
     icon_w = char_width_;
     icon_h = char_height_ - (char_height_ / 12);
     gr_fill(icon_x, icon_y, icon_x + icon_w, icon_y + icon_h);
 
-    // Capacity
-    if (batt_capacity_ <= 15) SetColor(UIElement::BATTERY_LOW);
+    // Capacity fill with gradient-like effect
     icon_x = x + char_width_ / 6;
     icon_y = y + char_height_ / 12;
     icon_w = char_width_ - (2 * char_width_ / 6);
     icon_h = char_height_ - (3 * char_height_ / 12);
     int cap_h = icon_h * batt_capacity_ / 100;
+
+    // Modern green for good battery, yellow for medium, red for low
+    if (batt_capacity_ <= 15) {
+      gr_color(207, 102, 121, 255);  // Red for low battery
+    } else if (batt_capacity_ <= 50) {
+      gr_color(255, 214, 0, 255);  // Yellow for medium battery
+    } else {
+      gr_color(102, 187, 106, 255);  // Green for good battery
+    }
     gr_fill(icon_x, icon_y + icon_h - cap_h, icon_x + icon_w, icon_y + icon_h);
-    gr_color(0, 0, 0, 255);
+
+    // Empty space (dark background)
+    gr_color(30, 30, 30, 255);
     gr_fill(icon_x, icon_y, icon_x + icon_w, icon_y + icon_h - cap_h);
 
     x -= char_width_;  // Separator
@@ -1779,7 +1807,8 @@ int ScreenRecoveryUI::SetSwCallback(int code, int value) {
   /* turn off all screen */
   gr_fb_blank(true, DirectRenderManager::DRM_INNER);
   gr_fb_blank(true, DirectRenderManager::DRM_OUTER);
-  gr_color(0, 0, 0, 255);
+  // Modern dark background
+  gr_color(18, 18, 18, 255);
   gr_clear();
 
   /* turn on the screen */
