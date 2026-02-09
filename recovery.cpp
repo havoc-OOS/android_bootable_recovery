@@ -875,6 +875,7 @@ Device::BuiltinAction start_recovery(Device* device, const std::vector<std::stri
   // LINEAGE_VERSION_APPEND_TIME_OF_DAY is set to true has the desired date.
   std::string ver = android::base::GetProperty("ro.modversion", "");
 
+  std::vector<std::string> title_lines = {
   "Version " + android::base::GetProperty("ro.havoc.build.version", "(unknown)"),
   };
   title_lines.push_back("Product name - " + android::base::GetProperty("ro.product.device", ""));
